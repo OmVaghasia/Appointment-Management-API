@@ -17,9 +17,10 @@ We have implemented following points as the part of coursework:
 ## Table of Contents
 - [About](#about)
 - [System Architecture](#system-architecture)
+- [Access Control in Database- MongoDB](#access-control-in-database--mongodb)
 - [Backend](#backend)
   - [CRUD Operations](#crud-operations)
-  - [Cloud Deployment](#cloud-deployment)
+  - [Cloud Deployment](#cloud-app)
     - [Google Cloud](#google-cloud)
   - [Running Locally](#running-locally)
     - [Local Node.js Installation](#local-node-installation)
@@ -42,6 +43,34 @@ We have also used <b>api.1up.health</b> external api to get the list of hospital
 The front-end is developed using angular library and is compatible with all browser versions and it is also responsive on mobile screens as well.
 The backend is a REST-based service interface for CRUD operations (for example, user sign up & login, CRUD operations on doctor and patient like POST, PUT) deployed via Google Cloud to facilitate scalable performance with Kubernetes of our dockerized image. The node server interacts with api.1up.health API. We have use an extranl NoSQL database i.e MongoDB which is hosted on cloud to store information about patients, users of the system and doctors. Since this is the microservice we can design multiple rest based API using different programming language like python, java, etc to make our application seamless. Adding other languages wont affect the system design and this in turn will make our system robust.
 
+## Access Control in Database- MongoDB
+Our database is hosted on cloud and configured in a way to enable remote access from any IP address. We, therefore, have implemented enabled authorizations and access controls for the database.
+
+Broadly, users are categorised as admin and general users. Admin users have read/write access to all the databases with userAdminAnyDatabase and readWriteAnyDatabase role. This command creates an Admin user with above roles:
+
+```
+use admin
+db.createUser(
+     {
+        user: "aman",
+        pwd: passwordPrompt(),
+        roles: [ {role: "userAdminAnyDatabase", db: "admin"}, "readWriteAnyDatabase"]
+    }
+)
+```
+
+The general users have read only rights on appointment_management database. This command creates one such user:
+
+```
+use admin
+db.createUser(
+     {
+        user: "alam",
+        pwd: passwordPrompt(),
+        roles: [ {role: "read", db: "appointment_management"}]
+    }
+)
+```
 
 ## Backend
 We have used Nodejs to build our backend application using express framework. It is advisable to use [Postman](https://www.postman.com/) to test the CRUD operations when accessing the backend.The CRUD operations are explained in detail in the next section.Backend code is available in the server folder with all the subfolders for code management and readability purpose.
